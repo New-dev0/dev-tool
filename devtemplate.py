@@ -14,4 +14,15 @@ async def init():
 client =  TelegramClient("bot", api_id=6, api_hash="")
 client.start()
 """,
+"aiohttp": """
+import asyncio
+url = ""
+
+async def main():
+    async with aiohttp.ClientSession() as ses:
+        async with ses.get(url) as res:
+            response = await res.read()
+
+asyncio.run(main())
+"""
 }

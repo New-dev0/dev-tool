@@ -27,7 +27,7 @@ if "create" in sys.argv:
                     ("runtime.txt", "python-3.10.6"),
                 ]
             )
-    elif sys.argv[2] in list(TEMPLATE.keys()):
+    elif len(sys.argv) > 1 and sys.argv[2] in list(TEMPLATE.keys()):
 
         files[0] = (
             "main.py",
@@ -52,7 +52,7 @@ if "create" in sys.argv:
     print("✅ Created template.")
 elif "install" in sys.argv:
     try:
-        package = sys.argv[sys.argv.index("install") :]
+        package = sys.argv[sys.argv.index("install") + 1:]
     except IndexError:
         print("😵 Package name was not provided.")
         sys.exit()
@@ -61,3 +61,25 @@ elif "install" in sys.argv:
         with open("requirements.txt", "a") as file:
             file.write("\n".join(package))
     print("Completed Task!")
+elif "run" in sys.argv:
+    get = sys.argv.index("run")
+    try:
+        file = os.path.abspath(sys.argv[get + 1])
+    except IndexError:
+        print("❌ File not specified.")
+        sys.exit()
+    notify =  "--notify" in sys.argv
+    if notify:
+        try:
+            import pyttsx3
+        except ImportError:
+            pyttsx3 = None
+            print("😵 pyttsx3 is not installed!")
+            notify = False
+    cmds = ["python"]
+    if os.path.isdir(file):
+        cmds.append("-m")
+    cmds.append(file)
+    process = subprocess.run(cmds)
+    if notify:
+        pyttsx3.speak(f"Command Execution finished with return code {process.returncode}.")
